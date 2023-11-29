@@ -1,46 +1,50 @@
-import { MarkdownView, Notice, Plugin, TFile } from 'obsidian';
-
-import { BookSearchModal } from '@views/book_search_modal';
-import { BookSuggestModal } from '@views/book_suggest_modal';
-import { CursorJumper } from '@utils/cursor_jumper';
-import { Book } from '@models/book.model';
-import { BookSearchSettingTab, BookSearchPluginSettings, DEFAULT_SETTINGS } from '@settings/settings';
+import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
+import { WikidataListView, VIEW_TYPE_EXAMPLE } from '@views/wikidata_sidebar';
+import { WikidataSearchModal } from '@views/wikidata_search_modal';
+import { WikidataSuggestModal } from '@views/wikidata_suggest_modal';
+import { WikidataEntity } from '@models/wikidata.model';
 import {
-  getTemplateContents,
-  applyTemplateTransformations,
-  useTemplaterPluginInFile,
-  executeInlineScriptsTemplates,
-} from '@utils/template';
-import { replaceVariableSyntax, makeFileName, applyDefaultFrontMatter, toStringFrontMatter } from '@utils/utils';
+  WikidataSidebarPluginSettingTab,
+  WikidataSidebarPluginSettings,
+  DEFAULT_SETTINGS,
+} from '@settings/wikidata_settings';
+import { BaseWikidataApiImpl, factoryServiceProvider } from '@apis/base_api';
 
-export default class BookSearchPlugin extends Plugin {
-  settings: BookSearchPluginSettings;
+export default class WikidataSidebarPlugin extends Plugin {
+  settings: WikidataSidebarPluginSettings;
+  serviceProvider: BaseWikidataApiImpl;
 
   async onload() {
     await this.loadSettings();
 
-    // This creates an icon in the left ribbon.
-    const ribbonIconEl = this.addRibbonIcon('book', 'Create new book note', () => this.createNewBookNote());
-    // Perform additional things with the ribbon
-    ribbonIconEl.addClass('obsidian-book-search-plugin-ribbon-class');
+    this.serviceProvider = factoryServiceProvider();
 
-    // This adds a simple command that can be triggered anywhere
+    console.log('registering view');
+    this.registerView(VIEW_TYPE_EXAMPLE, leaf => new WikidataListView(leaf, this));
+
+    // This creates an icon in the left ribbon.
+    const ribbonIconEl = this.addRibbonIcon('globe', 'Consult wikidata', () => this.useFrontmatter());
+    // Perform additional things with the ribbon
+    ribbonIconEl.addClass('wikidata-sidebar-plugin-ribbon-class');
+
     this.addCommand({
-      id: 'open-book-search-modal',
-      name: 'Create new book note',
-      callback: () => this.createNewBookNote(),
+      id: 'open-wikidata-search-modal',
+      name: 'Search wikidata for sidebar',
+      callback: () => this.searchForWikidataSidebar(),
     });
 
     this.addCommand({
-      id: 'open-book-search-modal-to-insert',
-      name: 'Insert the metadata',
-      callback: () => this.insertMetadata(),
+      id: 'use-mapped-frontmatter',
+      name: 'Load wikidata from frontmatter',
+      callback: () => this.useFrontmatter(),
     });
 
     // This adds a settings tab so the user can configure various aspects of the plugin
-    this.addSettingTab(new BookSearchSettingTab(this.app, this));
+    this.addSettingTab(new WikidataSidebarPluginSettingTab(this.app, this));
 
-    console.log(`Book Search: version ${this.manifest.version} (requires obsidian ${this.manifest.minAppVersion})`);
+    console.log(
+      `Wikidata sidebar: version ${this.manifest.version} (requires obsidian ${this.manifest.minAppVersion})`,
+    );
   }
 
   showNotice(message: unknown) {
@@ -51,121 +55,113 @@ export default class BookSearchPlugin extends Plugin {
     }
   }
 
-  // open modal for book search
-  async searchBookMetadata(query?: string): Promise<Book> {
-    const searchedBooks = await this.openBookSearchModal(query);
-    return await this.openBookSuggestModal(searchedBooks);
-  }
-
-  async getRenderedContents(book: Book) {
-    const {
-      templateFile,
-      useDefaultFrontmatter,
-      defaultFrontmatterKeyType,
-      frontmatter, // @deprecated
-      content, // @deprecated
-    } = this.settings;
-
-    if (templateFile) {
-      const templateContents = await getTemplateContents(this.app, templateFile);
-      const replacedVariable = replaceVariableSyntax(book, applyTemplateTransformations(templateContents));
-      return executeInlineScriptsTemplates(book, replacedVariable);
-    }
-
-    let replacedVariableFrontmatter = replaceVariableSyntax(book, frontmatter); // @deprecated
-    if (useDefaultFrontmatter) {
-      replacedVariableFrontmatter = toStringFrontMatter(
-        applyDefaultFrontMatter(book, replacedVariableFrontmatter, defaultFrontmatterKeyType),
-      );
-    }
-    const replacedVariableContent = replaceVariableSyntax(book, content);
-
-    return replacedVariableFrontmatter
-      ? `---\n${replacedVariableFrontmatter}\n---\n${replacedVariableContent}`
-      : replacedVariableContent;
-  }
-
-  async insertMetadata(): Promise<void> {
-    try {
-      const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-      if (!markdownView) {
-        console.warn('Can not find an active markdown view');
-        return;
-      }
-
-      // TODO: Try using a search query on the selected text
-      const book = await this.searchBookMetadata(markdownView.file.basename);
-
-      if (!markdownView.editor) {
-        console.warn('Can not find editor from the active markdown view');
-        return;
-      }
-
-      const renderedContents = await this.getRenderedContents(book);
-      markdownView.editor.replaceRange(renderedContents, { line: 0, ch: 0 });
-    } catch (err) {
-      console.warn(err);
-      this.showNotice(err);
-    }
-  }
-
-  async createNewBookNote(): Promise<void> {
-    try {
-      const book = await this.searchBookMetadata();
-      const renderedContents = await this.getRenderedContents(book);
-
-      // TODO: If the same file exists, it asks if you want to overwrite it.
-      // create new File
-      const fileName = makeFileName(book, this.settings.fileNameFormat);
-      const filePath = `${this.settings.folder}/${fileName}`;
-      const targetFile = await this.app.vault.create(filePath, renderedContents);
-
-      // if use Templater plugin
-      await useTemplaterPluginInFile(this.app, targetFile);
-      this.openNewBookNote(targetFile);
-    } catch (err) {
-      console.warn(err);
-      this.showNotice(err);
-    }
-  }
-
-  async openNewBookNote(targetFile: TFile) {
-    if (!this.settings.openPageOnCompletion) return;
-
-    // open file
-    const activeLeaf = this.app.workspace.getLeaf();
-    if (!activeLeaf) {
-      console.warn('No active leaf');
-      return;
-    }
-
-    await activeLeaf.openFile(targetFile, { state: { mode: 'source' } });
-    activeLeaf.setEphemeralState({ rename: 'all' });
-    // cursor focus
-    await new CursorJumper(this.app).jumpToNextCursorLocation();
-  }
-
-  async openBookSearchModal(query = ''): Promise<Book[]> {
-    return new Promise((resolve, reject) => {
-      return new BookSearchModal(this, query, (error, results) => {
-        return error ? reject(error) : resolve(results);
-      }).open();
-    });
-  }
-
-  async openBookSuggestModal(books: Book[]): Promise<Book> {
-    return new Promise((resolve, reject) => {
-      return new BookSuggestModal(this.app, books, (error, selectedBook) => {
-        return error ? reject(error) : resolve(selectedBook);
-      }).open();
-    });
-  }
-
   async loadSettings() {
     this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 
   async saveSettings() {
     await this.saveData(this.settings);
+  }
+
+  async searchForWikidataSidebar(): Promise<void> {
+    const item = await this.searchWikidataMetadata();
+    this.loadWikidataSidebar(item.entityId);
+  }
+
+  async useFrontmatter(): Promise<void> {
+    const currentPage = this.app.workspace.getActiveFile();
+    const fmc = this.app.metadataCache.getFileCache(currentPage)?.frontmatter;
+    console.log(fmc);
+
+    if (fmc.hasOwnProperty(this.settings.frontmatter_wikidata_entity_property_name)) {
+      const entityId = fmc[this.settings.frontmatter_wikidata_entity_property_name];
+      this.loadWikidataSidebar(entityId);
+    } else {
+      let fmValue;
+      let wdProperty;
+      for (const [fmkey, fmvalue] of Object.entries(fmc)) {
+        if (this.settings.frontmatter2wdpropertymapper.hasOwnProperty(fmkey.toLowerCase())) {
+          fmValue = fmvalue;
+          wdProperty = this.settings.frontmatter2wdpropertymapper[fmkey.toLowerCase()];
+        }
+      }
+      console.log(`Found mapping of ${wdProperty}, looking up value ${fmValue}`);
+      const item = await this.searchWikidataMetadataByProperty(wdProperty, fmValue);
+      const entityId = item.entityId.split('/').pop();
+      console.log(entityId);
+      this.loadWikidataSidebar(entityId);
+    }
+  }
+
+  async loadWikidataSidebar(entityId: string): Promise<void> {
+    try {
+      const myEntityId = entityId;
+      const wikidataItemDesc = await this.serviceProvider.getEntityDescription(myEntityId);
+      console.log(wikidataItemDesc);
+      const wikidataItemDescStatements = await this.serviceProvider.getEntityStatements(myEntityId);
+      console.log(wikidataItemDescStatements);
+      const wikidataItemDescLinks = await this.serviceProvider.getEntityLinks(myEntityId);
+      console.log(wikidataItemDescLinks);
+
+      console.log('Now should load sidebar view');
+      const { workspace } = this.app;
+
+      let leaf: WorkspaceLeaf | null = null;
+      const leaves = workspace.getLeavesOfType(VIEW_TYPE_EXAMPLE);
+
+      if (leaves.length > 0) {
+        console.log('A leaf with our view already exists, use that');
+        leaf = leaves[0];
+      } else {
+        console.log('Our view could not be found in the workspace, create a new leaf in the right sidebar for it');
+        leaf = workspace.getRightLeaf(false);
+        await leaf.setViewState({ type: VIEW_TYPE_EXAMPLE, active: true });
+      }
+      if (leaf.view instanceof WikidataListView) {
+        console.log('Leaf is WikidataListView');
+        leaf.view.setWikidataData(this, wikidataItemDesc, wikidataItemDescStatements, wikidataItemDescLinks);
+        workspace.revealLeaf(leaf);
+      } else {
+        console.log('what is the leaf?');
+      }
+    } catch (err) {
+      console.warn(err);
+      this.showNotice(err);
+    }
+  }
+
+  async searchByEntityId(entityId: string) {
+    console.log(`searching for ${entityId}`);
+    this.loadWikidataSidebar(entityId);
+  }
+
+  async searchWikidataMetadata(query?: string): Promise<WikidataEntity> {
+    const searchResults = await this.openWikidataSearchModal(query);
+    console.log(`Found ${searchResults.length}`);
+    console.log('hello');
+    return await this.openWikidataSuggestModal(searchResults);
+  }
+
+  async openWikidataSearchModal(query = ''): Promise<WikidataEntity[]> {
+    return new Promise((resolve, reject) => {
+      return new WikidataSearchModal(this, query, (error, results) => {
+        return error ? reject(error) : resolve(results);
+      }).open();
+    });
+  }
+
+  async searchWikidataMetadataByProperty(propertyname: string, propertyvalue: string): Promise<WikidataEntity> {
+    const searchResults = await this.serviceProvider.getByProperty(propertyname, propertyvalue);
+    console.log(`Found ${searchResults.length}`);
+    console.log('hello');
+    return await this.openWikidataSuggestModal(searchResults);
+  }
+
+  async openWikidataSuggestModal(items: WikidataEntity[]): Promise<WikidataEntity> {
+    return new Promise((resolve, reject) => {
+      return new WikidataSuggestModal(this.app, items, (error, selectedItem) => {
+        return error ? reject(error) : resolve(selectedItem);
+      }).open();
+    });
   }
 }

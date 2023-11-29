@@ -1,20 +1,20 @@
+import { WikidataEntity } from '../models/wikidata.model';
 import { ButtonComponent, Modal, Setting, TextComponent, Notice } from 'obsidian';
-import { Book } from '@models/book.model';
-import { BaseBooksApiImpl, factoryServiceProvider } from '@apis/base_api';
-import BookSearchPlugin from '@src/main';
+import { BaseWikidataApiImpl, factoryServiceProvider } from '@apis/base_api';
+import WikidataSidebarPlugin from '../main';
 
-export class BookSearchModal extends Modal {
+export class WikidataSearchModal extends Modal {
   private isBusy = false;
   private okBtnRef?: ButtonComponent;
-  private serviceProvider: BaseBooksApiImpl;
+  private serviceProvider: BaseWikidataApiImpl;
 
   constructor(
-    plugin: BookSearchPlugin,
+    plugin: WikidataSidebarPlugin,
     private query: string,
-    private callback: (error: Error | null, result?: Book[]) => void,
+    private callback: (error: Error | null, result?: WikidataEntity[]) => void,
   ) {
     super(plugin.app);
-    this.serviceProvider = factoryServiceProvider(plugin.settings);
+    this.serviceProvider = factoryServiceProvider();
   }
 
   setBusy(busy: boolean) {
@@ -23,11 +23,11 @@ export class BookSearchModal extends Modal {
     this.okBtnRef?.setButtonText(busy ? 'Requesting...' : 'Search');
   }
 
-  async searchBook() {
+  async searchWikidata() {
     if (!this.query) {
       throw new Error('No query entered.');
     }
-
+    console.log(`Searching for ${this.query}`);
     if (!this.isBusy) {
       try {
         this.setBusy(true);
@@ -35,7 +35,7 @@ export class BookSearchModal extends Modal {
         this.setBusy(false);
 
         if (!searchResults?.length) {
-          new Notice(`No results found for "${this.query}"`); // Couldn't find the book.
+          new Notice(`No results found for "${this.query}"`); // Couldn't find anything matching.
           return;
         }
 
@@ -49,14 +49,14 @@ export class BookSearchModal extends Modal {
 
   submitEnterCallback(event: KeyboardEvent) {
     if (event.key === 'Enter' && !event.isComposing) {
-      this.searchBook();
+      this.searchWikidata();
     }
   }
 
   onOpen() {
     const { contentEl } = this;
 
-    contentEl.createEl('h2', { text: 'Search Book' });
+    contentEl.createEl('h2', { text: 'Search wikidata' });
 
     contentEl.createDiv({ cls: 'book-search-plugin__search-modal--input' }, settingItem => {
       new TextComponent(settingItem)
@@ -71,7 +71,7 @@ export class BookSearchModal extends Modal {
         .setButtonText('Search')
         .setCta()
         .onClick(() => {
-          this.searchBook();
+          this.searchWikidata();
         }));
     });
   }

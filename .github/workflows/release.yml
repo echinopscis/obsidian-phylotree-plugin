@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  PLUGIN_NAME: obsidian-book-search
+  PLUGIN_NAME: wikidata-sidebar-plugin
 
 jobs:
   build:

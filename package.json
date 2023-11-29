@@ -1,19 +1,19 @@
 {
-  "name": "obsidian-book-search-plugin",
+  "name": "wikidata-sidebar-plugin",
   "version": "0.5.11",
-  "description": "This is a plugin to help you create book notes.",
-  "homepage": "https://anpigon.github.io/obsidian-book-search-plugin/",
+  "description": "A wikidata plugin",
+  "homepage": "https://nickynicolson.github.io/wikidata-sidebar-plugin/",
   "main": "main.js",
   "standard-version": {
     "t": ""
   },
   "keywords": [
-    "book",
-    "book note",
+    "wikidata",
+    "sidebar",
     "obsidian",
     "plugin"
   ],
-  "author": "anpigon",
+  "author": "nickynicolson",
   "license": "MIT",
   "engines": {
     "node": ">= 16",
@@ -38,9 +38,6 @@
     "deploy:pages": "gh-pages -d pages"
   },
   "devDependencies": {
-    "@popperjs/core": "^2.11.5",
-    "@types/jest": "^28.1.6",
-    "@types/node": "^16.11.6",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "builtin-modules": "^3.2.0",
@@ -49,13 +46,10 @@
     "gh-pages": "^4.0.0",
     "husky": "^8.0.1",
     "jest": "^28.1.3",
-    "jest-environment-jsdom": "^28.1.3",
     "obsidian": "latest",
     "prettier": "^2.7.1",
     "standard-version": "^9.3.2",
     "ts-jest": "^28.0.7",
-    "ts-node": "^10.9.1",
-    "tslib": "2.3.1",
     "typescript": "4.4.4"
   },
   "packageManager": "yarn@1.22.19"
