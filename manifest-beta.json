@@ -1,10 +1,10 @@
 {
   "id": "wikidata-sidebar-plugin",
   "name": "Wikidata sidebar",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "minAppVersion": "0.15.0",
   "description": "Helps you find information from wikidata.",
-  "author": "anpigon",
+  "author": "nickynicolson",
   "authorUrl": "https://github.com/nickynicolson",
   "isDesktopOnly": false
 }

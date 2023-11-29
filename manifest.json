@@ -1,10 +1,10 @@
 {
 	"id": "obsidian-book-wikidata-sidebar-plugin",
 	"name": "Wikidata sidebar",
-	"version": "0.5.11",
+	"version": "0.1.4",
 	"minAppVersion": "0.15.0",
 	"description": "Wikidata",
-	"author": "anpigon",
-	"authorUrl": "https://github.com/anpigon",
+	"author": "nickynicolson",
+	"authorUrl": "https://github.com/nickynicolson",
 	"isDesktopOnly": false
 }
