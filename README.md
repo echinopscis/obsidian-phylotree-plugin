@@ -26,9 +26,7 @@ TBC
 
 ## How to install
 
-Click the link to install the Wikidata sidebar plugin: [Install Link](https://obsidian.md/plugins?id=obsidian-wikidata-sidebar-plugin)
-
-Or, Search in the Obsidian Community plugin. And install it.
+Download the zip file named "wikidata-sidebar-plugin.zip" attached to the [latest release](https://github.com/echinopscis/obsidian-wikidata-plugin/releases/latest) and unzip in under the `.obsidian/plugins` directory under your Obsidian vault.
 
 ## How to use
 
