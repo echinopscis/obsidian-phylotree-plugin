@@ -74,4 +74,4 @@ You can make a [pull request](https://github.com/echinopscis/obsidian-wikidata-p
 
 ## Credits 
 
-Sincere thanks to Toby Hudson (AKA [9909](https://github.com/99of9)) for his work on the browser plugin [Entity Explosion](https://github.com/99of9/Entity-Explosion) which inspired this plugin, and to [anpigon](https://github.com/anpigon) who developed the [obsidian book search plugin](https://github.com/anpigon/obsidian-book-search-plugin) which was used as the basis for this development.
+Sincere thanks to Toby Hudson (AKA [99of9](https://github.com/99of9)) for his work on the browser plugin [Entity Explosion](https://github.com/99of9/Entity-Explosion) which inspired this plugin, and to [anpigon](https://github.com/anpigon) who developed the [obsidian book search plugin](https://github.com/anpigon/obsidian-book-search-plugin) which was used as the basis for this development.
