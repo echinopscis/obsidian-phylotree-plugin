@@ -160,8 +160,11 @@ export default class WikidataSidebarPlugin extends Plugin {
   async searchWikidataMetadataByProperty(propertyname: string, propertyvalue: string): Promise<WikidataEntity> {
     const searchResults = await this.serviceProvider.getByProperty(propertyname, propertyvalue);
     console.log(`Found ${searchResults.length}`);
-    console.log('hello');
-    return await this.openWikidataSuggestModal(searchResults);
+    if (searchResults.length == 1) {
+      return searchResults[0];
+    } else {
+      return await this.openWikidataSuggestModal(searchResults);
+    }
   }
 
   async openWikidataSuggestModal(items: WikidataEntity[]): Promise<WikidataEntity> {
