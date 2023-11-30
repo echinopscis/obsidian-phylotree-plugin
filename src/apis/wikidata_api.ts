@@ -107,7 +107,7 @@ export class WikidataApi implements BaseWikidataApiImpl {
 
   wikidataItemByPropertySearchResult2WikidataEntity(item: WdItemByPropertyBinding): WikidataEntity {
     const wdEntity: WikidataEntity = {
-      entityId: item.item.value,
+      entityId: item.item.value.split('/').pop(),
       label: item.itemLabel.value,
       description: item.itemDescription.value,
     };
