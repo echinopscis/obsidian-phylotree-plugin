@@ -26,9 +26,7 @@ TBC
 
 ## How to install
 
-Click the link to install the Wikidata sidebar plugin: [Install Link](https://obsidian.md/plugins?id=obsidian-wikidata-sidebar-plugin)
-
-Or, Search in the Obsidian Community plugin. And install it.
+Download the zip file named "wikidata-sidebar-plugin.zip" attached to the [latest release](https://github.com/echinopscis/obsidian-wikidata-plugin/releases/latest) and unzip in under the `.obsidian/plugins` directory under your Obsidian vault.
 
 ## How to use
 
@@ -76,4 +74,4 @@ You can make a [pull request](https://github.com/echinopscis/obsidian-wikidata-p
 
 ## Credits 
 
-Sincere thanks to Toby Hudson (AKA [9909](https://github.com/99of9)) for his work on the browser plugin [Entity Explosion](https://github.com/99of9/Entity-Explosion) which inspired this plugin, and to [anpigon](https://github.com/anpigon) who developed the [obsidian book search plugin](https://github.com/anpigon/obsidian-book-search-plugin) which was used as the basis for this development.
+Sincere thanks to Toby Hudson (AKA [99of9](https://github.com/99of9)) for his work on the browser plugin [Entity Explosion](https://github.com/99of9/Entity-Explosion) which inspired this plugin, and to [anpigon](https://github.com/anpigon) who developed the [obsidian book search plugin](https://github.com/anpigon/obsidian-book-search-plugin) which was used as the basis for this development.
