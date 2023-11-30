@@ -64,7 +64,14 @@ export default class WikidataSidebarPlugin extends Plugin {
   }
 
   async searchForWikidataSidebar(): Promise<void> {
-    const item = await this.searchWikidataMetadata();
+    let item: WikidataEntity;
+    const query = window.getSelection().toString();
+    console.log(query);
+    if (typeof query == 'string') {
+      item = await this.searchWikidataMetadata(query);
+    } else {
+      item = await this.searchWikidataMetadata(query);
+    }
     this.loadWikidataSidebar(item.entityId);
   }
 
