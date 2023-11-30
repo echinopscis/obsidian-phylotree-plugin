@@ -15,7 +15,11 @@ export class WikidataSuggestModal extends FuzzySuggestModal<WikidataEntity> {
   }
 
   getItemText(item: WikidataEntity): string {
-    return `${item.entityId} ${item.label}`;
+    if (item.description ?? false) {
+      return `${item.entityId} ${item.label} (${item.description})`;
+    } else {
+      return `${item.entityId} ${item.label}`;
+    }
   }
   onChooseItem(item: WikidataEntity): void {
     console.log('chosen', item);
