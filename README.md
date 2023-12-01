@@ -6,6 +6,12 @@ Load data from wikidata to a sidebar, using a direct text search or via mapped f
 
 ## Changelog
 
+### 0.2.0
+- Use selected text as search input, if available ([issue #3](https://github.com/echinopscis/obsidian-wikidata-plugin/issues/3)).
+- Add bracketed description text in entity selection list, if available ([issue #4](https://github.com/echinopscis/obsidian-wikidata-plugin/issues/4))
+- Correct display in select modal when called from frontmatter (shows full URL for entity id) ([issue #5](https://github.com/echinopscis/obsidian-wikidata-plugin/issues/5))
+- Bypass select modal if only one item found ([issue #6](https://github.com/echinopscis/obsidian-wikidata-plugin/issues/6))
+ 
 ### 0.1.0 Initial revision
 
 ### Features
