@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-book-wikidata-sidebar-plugin",
 	"name": "Wikidata sidebar",
-	"version": "0.1.4",
+	"version": "0.2.0",
 	"minAppVersion": "0.15.0",
 	"description": "Wikidata",
 	"author": "nickynicolson",
