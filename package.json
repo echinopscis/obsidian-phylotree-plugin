@@ -26,7 +26,7 @@
     "format:check": "prettier --check \"**/*.ts\"",
     "lint": "yarn format:check && eslint . --ext .ts && tsc --noEmit -skipLibCheck",
     "lint:fix": "yarn format && eslint . --ext .ts --fix",
-    "build": "yarn run lint && node esbuild.config.mjs production",
+    "build": "node esbuild.config.mjs production",
     "release": "standard-version",
     "release-test": "standard-version --dry-run",
     "release-major": "standard-version --release-as major",
