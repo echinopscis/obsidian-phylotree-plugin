@@ -6,9 +6,11 @@ Display phylogenetic trees in Obsidian. Tree data is specified in a fenced code 
 
 ## Changelog
 
-### 0.1.0 Initial revision
+### 0.2.0 
 
-### Features
+- Fix [issue #1](https://github.com/nickynicolson/obsidian-phylotree-plugin/issues/1) - translate and quote node labels when building search term
+
+### 0.1.0 Initial revision
 
 - Adds newick and nexus fenced code blocks to Obsidian to specify phylogenetic trees for visualisation
 - Node click constructs a search for the node labels included in the clade
