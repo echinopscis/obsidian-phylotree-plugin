@@ -6,7 +6,7 @@ on:
       - '*'
 
 env:
-  PLUGIN_NAME: wikidata-sidebar-plugin
+  PLUGIN_NAME: phylotree-block-plugin
 
 jobs:
   build:
