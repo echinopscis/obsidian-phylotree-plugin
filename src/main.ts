@@ -38,11 +38,14 @@ export default class PhyloPlugin extends Plugin {
         'node-styler': function (element: HTMLElement, data: phylotree.Node) {
           element.on('click', function () {
             if (tree.isLeafNode(data)) {
-              app['internalPlugins'].plugins['global-search'].instance.openGlobalSearch(data.data.name);
+              const query = '"' + data.data.name.replace('_', ' ') + '"';
+              app['internalPlugins'].plugins['global-search'].instance.openGlobalSearch(query);
             } else {
               const sel = tree.selectAllDescendants(data, true, true);
-              const nodeLabels = sel.filter(obj => obj.data.name.length > 0).map(obj => obj.data.name);
-              app['internalPlugins'].plugins['global-search'].instance.openGlobalSearch(nodeLabels.join(' OR '));
+              const nodeLabels = sel.filter(obj => obj.data.name.length > 0).map(obj => obj.data.name.replace('_', ' '));
+              console.log(nodeLabels);
+              const query = '"' + nodeLabels.join('" OR "') + '"';
+              app['internalPlugins'].plugins['global-search'].instance.openGlobalSearch(query);
             }
           });
         },
