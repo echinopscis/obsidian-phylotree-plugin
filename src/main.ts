@@ -14,11 +14,22 @@ export default class PhyloPlugin extends Plugin {
       const tree_container = el.createEl('div');
       tree_container.className = 'tree-container';
       tree_container.id = 'tree-container';
+      // Test if we should define width and height using user supplied values
+			var first_line = newick.split(/\r?\n/)[0];
+			const regex = /height=(?<height>\d+),width=(?<width>\d+)/;
+			let x = regex.exec(first_line);
+			var width = tree_container.clientWidth;
+			var height = tree_container.clientHeight;
+			console.log(x);
+			if (x){
+				height = parseInt(x.groups['height']);
+				width = parseInt(x.groups['width']);
+			}      
       const tree = new phylotree.phylotree(newick, { type: phyloTreeFormat });
       const renderOptions = {
         container: tree_container,
-        height: tree_container.clientHeight,
-        width: tree_container.clientWidth,
+        height: height,
+        width: width,
         'left-right-spacing': 'fit-to-size',
         'top-bottom-spacing': 'fit-to-size',
         selectable: true,
