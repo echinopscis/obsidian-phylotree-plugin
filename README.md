@@ -25,7 +25,7 @@ TBC
 
 ## How to install
 
-Download the zip file named "phylotree-plugin.zip" attached to the [latest release](https://github.com/echinopscis/obsidian-wikidata-plugin/releases/latest) and unzip in under the `.obsidian/plugins` directory under your Obsidian vault.
+Download the zip file named "phylotree-plugin.zip" attached to the [latest release](https://github.com/echinopscis/obsidian-phylotree-plugin/releases/latest) and unzip in under the `.obsidian/plugins` directory under your Obsidian vault.
 
 ## How to use
 
