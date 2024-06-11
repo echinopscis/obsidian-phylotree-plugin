@@ -21,7 +21,7 @@ TBC
 
 ## Description
 
-TBC
+See the blog post ["Phylogeny viewer plugin"](https://echinopscis.github.io/blog/2024/phylo-vis/) on the [echinopscis site](https://echinopscis.github.io)
 
 ## How to install
 
