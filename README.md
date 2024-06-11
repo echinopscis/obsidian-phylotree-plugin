@@ -6,6 +6,10 @@ Display phylogenetic trees in Obsidian. Tree data is specified in a fenced code 
 
 ## Changelog
 
+### 0.3.0
+
+- Fix [issue #2](https://github.com/nickynicolson/obsidian-phylotree-plugin/issues/2) - allow user specified dimensions for tree visualisation
+
 ### 0.2.0 
 
 - Fix [issue #1](https://github.com/nickynicolson/obsidian-phylotree-plugin/issues/1) - translate and quote node labels when building search term
